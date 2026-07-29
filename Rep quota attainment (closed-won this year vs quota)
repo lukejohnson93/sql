@@ -1,0 +1,12 @@
+SELECT
+    r.rep_name,
+    r.quota,
+    COALESCE(SUM(o.amount), 0) AS closed_won_amount,
+    ROUND(COALESCE(SUM(o.amount), 0) / NULLIF(r.quota, 0) * 100, 1) AS pct_to_quota
+FROM reps r
+LEFT JOIN opportunities o
+    ON o.account_id IN (SELECT account_id FROM accounts WHERE rep_id = r.rep_id)
+    AND o.stage = 'Closed Won'
+    AND YEAR(o.close_date) = YEAR(CURRENT_DATE())
+GROUP BY r.rep_name, r.quota
+ORDER BY pct_to_quota DESC;
