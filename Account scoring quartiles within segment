@@ -1,0 +1,8 @@
+SELECT
+    account_id,
+    account_name,
+    segment,
+    employee_count,
+    NTILE(4) OVER (PARTITION BY segment ORDER BY employee_count DESC) AS size_quartile
+FROM accounts
+ORDER BY segment, size_quartile;
