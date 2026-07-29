@@ -15,5 +15,5 @@ FROM accounts a
 JOIN territories t ON a.territory_id = t.territory_id
 LEFT JOIN last_activity la ON la.account_id = a.account_id
 WHERE la.last_activity_date < DATEADD('day', -90, CURRENT_DATE())
-   OR la.last_activity_date IS NULL   -- never touched at all
+   OR la.last_activity_date IS NULL
 ORDER BY t.territory_name, days_inactive DESC NULLS FIRST;
