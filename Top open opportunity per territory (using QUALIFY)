@@ -1,0 +1,11 @@
+SELECT
+    t.territory_name,
+    a.account_name,
+    o.opp_id,
+    o.amount,
+    o.stage
+FROM opportunities o
+JOIN accounts a ON o.account_id = a.account_id
+JOIN territories t ON a.territory_id = t.territory_id
+WHERE o.stage NOT IN ('Closed Won', 'Closed Lost')
+QUALIFY ROW_NUMBER() OVER (PARTITION BY t.territory_id ORDER BY o.amount DESC) = 1; 
