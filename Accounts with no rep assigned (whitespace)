@@ -1,0 +1,3 @@
+SELECT account_id, account_name, segment, state
+FROM accounts
+WHERE rep_id IS NULL;
