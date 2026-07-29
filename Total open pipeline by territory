@@ -1,0 +1,9 @@
+SELECT
+    t.territory_name,
+    SUM(o.amount) AS open_pipeline
+FROM opportunities o
+JOIN accounts a ON o.account_id = a.account_id
+JOIN territories t ON a.territory_id = t.territory_id
+WHERE o.stage NOT IN ('Closed Won', 'Closed Lost')
+GROUP BY t.territory_name
+ORDER BY open_pipeline DESC;
