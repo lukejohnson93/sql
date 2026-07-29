@@ -1,0 +1,22 @@
+WITH territory_load AS (
+    SELECT
+        territory_id,
+        COUNT(account_id) AS account_count,
+        SUM(employee_count) AS total_employees
+    FROM accounts
+    GROUP BY territory_id
+)
+SELECT
+    t.territory_name,
+    t.capacity_target,
+    tl.account_count,
+    tl.total_employees,
+    ROUND((tl.total_employees - t.capacity_target) / NULLIF(t.capacity_target, 0) * 100, 1) AS pct_variance,
+    CASE
+        WHEN tl.total_employees > t.capacity_target * 1.1 THEN 'Over capacity'
+        WHEN tl.total_employees < t.capacity_target * 0.9 THEN 'Under capacity'
+        ELSE 'Balanced'
+    END AS capacity_status
+FROM territories t
+LEFT JOIN territory_load tl ON tl.territory_id = t.territory_id
+ORDER BY pct_variance DESC;
