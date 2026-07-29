@@ -1,0 +1,19 @@
+WITH last_activity AS (
+    SELECT
+        account_id,
+        MAX(activity_date) AS last_activity_date
+    FROM activities
+    GROUP BY account_id
+)
+SELECT
+    t.territory_name,
+    a.account_id,
+    a.account_name,
+    la.last_activity_date,
+    DATEDIFF('day', la.last_activity_date, CURRENT_DATE()) AS days_since_activity
+FROM accounts a
+JOIN territories t ON a.territory_id = t.territory_id
+LEFT JOIN last_activity la ON la.account_id = a.account_id
+WHERE la.last_activity_date < DATEADD('day', -90, CURRENT_DATE())
+   OR la.last_activity_date IS NULL   -- never touched at all
+ORDER BY t.territory_name, days_since_activity DESC NULLS FIRST;
